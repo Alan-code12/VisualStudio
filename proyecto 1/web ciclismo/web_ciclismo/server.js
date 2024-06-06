@@ -1,60 +1,58 @@
 const express = require('express');
+const sqlite3 = require('sqlite3').verbose();
+const cors = require('cors');
 const bodyParser = require('body-parser');
-const mongoose = require('mongoose');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3001;
 
+// Middlewares
+app.use(cors());
 app.use(bodyParser.json());
 
-// Conexión a la base de datos MongoDB
-mongoose.connect('mongodb://localhost:27017/Backend2', { useNewUrlParser: true, useUnifiedTopology: true });
-const db = mongoose.connection;
-db.on('error', console.error.bind(console, 'Error de conexión a MongoDB:'));
-db.once('open', () => {
-  console.log('Conectado a la base de datos MongoDB');
+// Conexión a la base de datos SQLite
+const db = new sqlite3.Database('Backend2.db', (err) => {
+    if (err) {
+        console.error('Error al conectar a la base de datos:', err.message);
+    } else {
+        console.log('Conectado a la base de datos SQLite.');
+    }
 });
 
-// Definir el esquema y el modelo de la colección Corredores
-const corredorSchema = new mongoose.Schema({
-  curpRun: { type: String, unique: true },
-  genero: String,
-  fechaNacRun: Date,
-  NumCarreraP: Number,
-  IdCategoriaPert: Number,
-  CalleRun: String,
-  NumIntRun: String,
-  NumExtRun: String,
-  ColRun: String,
-  cpRun: String,
-  ciudadRun: String,
-  entidadRun: String
-});
-const Corredor = mongoose.model('Corredor', corredorSchema);
-
-// Rutas para CRUD de Corredores
-app.post('/corredores', async (req, res) => {
-  try {
-    const corredor = new Corredor(req.body);
-    await corredor.save();
-    res.status(201).json(corredor);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
+// Ruta para obtener todos los corredores
+app.get('/corredores', (req, res) => {
+    const sql = 'SELECT * FROM Corredores';
+    db.all(sql, [], (err, rows) => {
+        if (err) {
+            res.status(400).json({ error: err.message });
+            return;
+        }
+        res.json({
+            message: 'success',
+            data: rows
+        });
+    });
 });
 
-app.get('/corredores', async (req, res) => {
-  try {
-    const corredores = await Corredor.find();
-    res.json(corredores);
-  } catch (err) {
-    res.status(500).json({ message: err.message });
-  }
+// Ruta para añadir un nuevo corredor
+app.post('/corredores', (req, res) => {
+    const { curpRun, genero, fechaNacRun, NumCarreraP, IdCategoriaPert, CalleRun, NumIntRun, NumExtRun, ColRun, cpRun, ciudadRun, entidadRun } = req.body;
+    const sql = 'INSERT INTO Corredores (curpRun, genero, fechaNacRun, NumCarreraP, IdCategoriaPert, CalleRun, NumIntRun, NumExtRun, ColRun, cpRun, ciudadRun, entidadRun) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const params = [curpRun, genero, fechaNacRun, NumCarreraP, IdCategoriaPert, CalleRun, NumIntRun, NumExtRun, ColRun, cpRun, ciudadRun, entidadRun];
+    db.run(sql, params, function (err) {
+        if (err) {
+            res.status(400).json({ error: err.message });
+            return;
+        }
+        res.json({
+            message: 'success',
+            data: req.body,
+            id: this.lastID
+        });
+    });
 });
-
-// Agrega más rutas para actualizar y eliminar corredores según sea necesario...
 
 // Iniciar el servidor
 app.listen(PORT, () => {
-  console.log(`Servidor Express escuchando en el puerto ${PORT}`);
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
 });
