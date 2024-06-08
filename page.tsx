@@ -1,24 +1,23 @@
-// pages/index.tsx
+// pages/index.js
 "use client"
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { Event } from './types'; // Ajusta la ruta según la ubicación de tu archivo types.ts
 
 // Array de eventos (rutas de ciclismo)
-const events: Event[] = [
-  { id: 0, name: 'Ruta de montaña', category: 'Montaña', image: '/ciclismo.2.jpg' },
-  { id: 1, name: 'Ruta urbana', category: 'Urbana', image: '/ciclismo.3.jpg' },
-  { id: 2, name: 'Ruta cemento', category: 'Cemento', image: '/ciclismo4.jpg' }
+const events = [
+  { id: 0, name: 'Ruta de montaña', category: 'Montaña', images: '/public/imagen/camiseta.jpg' },
+  { id: 1, name: 'Ruta urbana', category: 'Urbana', images: '/public/imagen/pantalon.jpg' },
+  { id: 3, name: 'ruta cemento', category: 'cemento', Image: '/public/imagen/zapatos.jpg'}
   // ...otros eventos
 ];
 
 // Componente para mostrar un evento
-const EventCard = ({ event }: { event: Event }) => (
+const EventCard = ({ event }) => (
   <div className="event-card card" style={{ textAlign: 'center', background: 'linear-gradient(to bottom, #f0f0f0, #e0e0e0)', padding: '20px', marginBottom: '20px' }}>
     {/* Barra superior azul */}
     <div style={{ background: 'blue', height: '40px' }}></div>
     {/* Imagen del evento */}
-    <Image src={event.image} alt={event.name} width={500} height={300} />
+    <Image src={`/image/${event.image}`} alt={event.name} width={30} height={20} />
     {/* Detalles del evento */}
     <div className="card-body">
       <h3 className="card-title">{event.name}</h3>
