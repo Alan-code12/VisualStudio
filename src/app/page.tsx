@@ -8,7 +8,7 @@ import { Event } from './types'; // Ajusta la ruta según la ubicación de tu ar
 const events: Event[] = [
   { id: 0, name: 'Ruta de montaña', category: 'Montaña', image: '/ciclismo.2.jpg' },
   { id: 1, name: 'Ruta urbana', category: 'Urbana', image: '/ciclismo.3.jpg' },
-  { id: 2, name: 'Ruta cemento', category: 'Cemento', image: '/ciclismo4.jpg' }
+  { id: 2, name: 'Ruta carretera', category: 'Carretera', image: '/ciclismo4.jpg' }
   // ...otros eventos
 ];
 
